@@ -1,7 +1,7 @@
 /*
  * trololisp
  * yet another experimental lisp-like interpreter
- * 
+ *
  * by s. rannou <mxs@sbrk.org>
  */
 
@@ -26,6 +26,8 @@ exec_file(const char * filepath)
 {
   file	*new;
   file	*prev;
+  node	*in;
+  node	*out;
 
   if (NULL == (new = (file *) malloc(sizeof(*new))))
     err(1, "unable to allocated memory for file %s", filepath);
@@ -40,7 +42,11 @@ exec_file(const char * filepath)
 
   do {
     skip_blanks();
-  } while (-1 != eval_list(parse_list()));
+    in = parse_list();
+    out = eval_list(in);
+    node_free(in);
+    node_free(out);
+  } while (in && out && '\0' != F_CHAR);
 
   cur_f = prev;  
   if (munmap(new->buf, MAX_INPUT_SIZE))

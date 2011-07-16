@@ -130,7 +130,8 @@ parse_list(void)
 {
   node		*new;
   node		*elem;
-  node_list	*list;
+  node_list	*new_elem;
+  node_list	*current;
 
   skip_blanks();
   if (F_CHAR == '(')
@@ -144,15 +145,27 @@ parse_list(void)
       if (elem)
 	{
 	  new->type = LIST;
-	  do {
-	    if (NULL == (list = malloc(sizeof(*list))))
-	      err(1, "unable to allocate memory for new list");
-	    memset(list, 0, sizeof(*list));
-	    list->next = new->elem;
-	    list->elem = elem;
-	    new->elem = list;
-	    skip_blanks();
-	  } while (NULL != (elem = parse_elem()));
+	  while (elem)
+	    {
+	      if (NULL == (new_elem = malloc(sizeof(*new_elem))))
+		err(1, "unable to allocate memory for new list");
+	      memset(new_elem, 0, sizeof(*new_elem));
+	      new_elem->elem = elem;
+
+	      if (NULL == new->elem)
+		new->elem = new_elem;
+	      else
+		{
+		  for (current = new->elem;
+		       NULL != current->next;
+		       current = current->next)
+		    ;
+		  current->next = new_elem;
+		}
+
+	      skip_blanks();
+	      elem = parse_elem();
+	    }
 	}
       else
 	new->type = NIL;
