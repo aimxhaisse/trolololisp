@@ -69,6 +69,7 @@ typedef struct sym_builtins_s
 {
   char		*name;
   node		*(*builtin)(node_list *params);
+  char		*help;
 } sym_builtins;
 
 #endif /* LISP_H */

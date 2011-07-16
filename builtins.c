@@ -8,13 +8,15 @@
 static node	*sym_builtin_add(node_list *params);
 static node	*sym_builtin_print(node_list *params);
 static node	*sym_builtin_list(node_list *params);
+static node	*sym_builtin_help(node_list *params);
 
 sym_builtins builtins[] = {
-  { "+",	&sym_builtin_add },
-  { "add",	&sym_builtin_add },
-  { "puts",	&sym_builtin_print },
-  { "list",	&sym_builtin_list },
-  { NULL,	NULL}
+  { "+",	&sym_builtin_add,	"performs an addition with all parameters" },
+  { "add",	&sym_builtin_add,	"performs an addition with all parameters" },
+  { "puts",	&sym_builtin_print,	"prints each parameter on a new line" },
+  { "list",	&sym_builtin_list,	"returns a list containing all parameters"},
+  { "help",	&sym_builtin_help,	"displays help about a builtin"},
+  { NULL, NULL, NULL}
 };
 
 static void
@@ -98,6 +100,31 @@ sym_builtin_list(node_list *params)
     }
 
   return result;
+}
+
+static node
+*sym_builtin_help(node_list *params)
+{
+  node_sym	*sym;
+  int		i;
+  int		found;
+
+  if (NULL == params->elem || params->elem->type != SYM)
+    builtin_error("bad parameter for builtin help");    
+  sym = params->elem->elem;
+  for (i = 0, found = 0; NULL != builtins[i].name; ++i)
+    {
+      if (0 == strcmp(builtins[i].name, sym->name))
+	{
+	  printf("%s\n", builtins[i].help);
+	  found++;
+	  break;
+	}
+    }
+  if (!found)
+    builtin_error("no help found for this builtin");
+
+  return node_new_nil();
 }
 
 node *
