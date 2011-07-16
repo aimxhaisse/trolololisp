@@ -6,6 +6,7 @@
 #include "lisp.h"
 
 static node	*sym_builtin_add(node_list *params);
+static node	*sym_builtin_sub(node_list *params);
 static node	*sym_builtin_print(node_list *params);
 static node	*sym_builtin_list(node_list *params);
 static node	*sym_builtin_help(node_list *params);
@@ -13,6 +14,8 @@ static node	*sym_builtin_help(node_list *params);
 sym_builtins builtins[] = {
   { "+",	&sym_builtin_add,	"performs an addition with all parameters" },
   { "add",	&sym_builtin_add,	"performs an addition with all parameters" },
+  { "-",	&sym_builtin_sub,	"performs a substraction with all parameters" },
+  { "sub",	&sym_builtin_sub,	"performs a substraction with all parameters" },
   { "puts",	&sym_builtin_print,	"prints each parameter on a new line" },
   { "list",	&sym_builtin_list,	"returns a list containing all parameters"},
   { "help",	&sym_builtin_help,	"displays help about a builtin"},
@@ -38,6 +41,23 @@ sym_builtin_add(node_list *params)
 	builtin_error("bad parameter for builtin addition");
       if (current->elem->type == NUM)
 	result += atoi(((node_num *) current->elem->elem)->val);
+    }
+
+  return node_new_num(result);
+}
+
+static node *
+sym_builtin_sub(node_list *params)
+{
+  node_list	*current;
+  int		result = 0;
+
+  for (current = params; NULL != current; current = current->next)
+    {
+      if (current->elem->type != NUM && current->elem->type != NIL)
+	builtin_error("bad parameter for builtin substraction");
+      if (current->elem->type == NUM)
+	result -= atoi(((node_num *) current->elem->elem)->val);
     }
 
   return node_new_num(result);
@@ -122,7 +142,7 @@ static node
 	}
     }
   if (!found)
-    builtin_error("no help found for this builtin");
+    printf("no help found for this builtin\n");
 
   return node_new_nil();
 }

@@ -65,7 +65,7 @@ parse_symbol(void)
   node		*new;
   node_sym	*sym;
 
-  for (count = 0; strchr("abcdefghijklmnopqrstuvwxyz+", F_CHAR); ++count)
+  for (count = 0; strchr("abcdefghijklmnopqrstuvwxyz+-*/%", F_CHAR); ++count)
     F_POS++;
   if (count > 0)
     {

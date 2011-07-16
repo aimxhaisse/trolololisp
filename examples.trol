@@ -3,3 +3,4 @@
 (puts (list 3 4 (list) () nil))
 (puts (help puts))
 (help +)
+(puts (+ 1 (- 5 5)))
