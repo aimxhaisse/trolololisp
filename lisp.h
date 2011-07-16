@@ -54,4 +54,8 @@ extern file *cur_f;
 #define F_LINE	(cur_f->line)
 #define F_PATH	(cur_f->path)
 
+node	*parse_list(void);
+int 	skip_blanks(void);
+int	eval_list(node *list);
+
 #endif /* LISP_H */
