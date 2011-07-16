@@ -23,6 +23,8 @@ eval_node(node *n)
   switch (n->type)
     {
     case SYM:
+      
+
     case NIL:
     case NUM:
       return node_dup(n);
