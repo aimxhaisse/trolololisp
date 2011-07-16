@@ -4,3 +4,6 @@
 (puts (help puts))
 (help +)
 (puts (+ 1 (- 5 5)))
+(puts (/ 3 2))
+(puts (mod 3 2))
+(help %)

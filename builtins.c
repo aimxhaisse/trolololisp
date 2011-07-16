@@ -7,6 +7,9 @@
 
 static node	*sym_builtin_add(node_list *params);
 static node	*sym_builtin_sub(node_list *params);
+static node	*sym_builtin_div(node_list *params);
+static node	*sym_builtin_mod(node_list *params);
+static node	*sym_builtin_mul(node_list *params);
 static node	*sym_builtin_print(node_list *params);
 static node	*sym_builtin_list(node_list *params);
 static node	*sym_builtin_help(node_list *params);
@@ -16,6 +19,12 @@ sym_builtins builtins[] = {
   { "add",	&sym_builtin_add,	"performs an addition with all parameters" },
   { "-",	&sym_builtin_sub,	"performs a substraction with all parameters" },
   { "sub",	&sym_builtin_sub,	"performs a substraction with all parameters" },
+  { "/",	&sym_builtin_div,	"performs a division with all parameters" },
+  { "div",	&sym_builtin_div,	"performs a division with all parameters" },
+  { "%",	&sym_builtin_mod,	"performs a modulo with all parameters" },
+  { "mod",	&sym_builtin_mod,	"performs a modulo with all parameters" },
+  { "*",	&sym_builtin_mul,	"performs a multiplication with all parameters" },
+  { "mul",	&sym_builtin_mul,	"performs a multiplication with all parameters" },
   { "puts",	&sym_builtin_print,	"prints each parameter on a new line" },
   { "list",	&sym_builtin_list,	"returns a list containing all parameters"},
   { "help",	&sym_builtin_help,	"displays help about a builtin"},
@@ -42,6 +51,97 @@ sym_builtin_add(node_list *params)
       if (current->elem->type == NUM)
 	result += atoi(((node_num *) current->elem->elem)->val);
     }
+
+  return node_new_num(result);
+}
+
+static node *
+sym_builtin_mul(node_list *params)
+{
+  node_list	*current;
+  int		result = 1;
+
+  for (current = params; NULL != current; current = current->next)
+    {
+      if (current->elem->type != NUM && current->elem->type != NIL)
+	builtin_error("bad parameter for builtin multiplication");
+      if (current->elem->type == NUM)
+	result *= atoi(((node_num *) current->elem->elem)->val);
+    }
+
+  return node_new_num(result);
+}
+
+static node *
+sym_builtin_div(node_list *params)
+{
+  node_list	*current;
+  int		init = 0;
+  int		result = 0;
+  int		num;
+
+  for (current = params; NULL != current; current = current->next)
+    {
+      if (current->elem->type != NUM && current->elem->type != NIL)
+	builtin_error("bad parameter for builtin division");
+      if (current->elem->type == NUM)
+	{
+	  if (init == 0)
+	    {
+	      init = 1;
+	      result = atoi(((node_num *) current->elem->elem)->val);
+	    }
+	  else
+	    {
+	      num = atoi(((node_num *) current->elem->elem)->val);
+	      if (num == 0)
+		builtin_error("division by 0");
+	      result /= num;
+	      init = 2;
+	    }
+	}
+      else
+	builtin_error("division by 0");
+    }
+  if (2 != init)
+    builtin_error("builtin division expects at least two parameters");
+
+  return node_new_num(result);
+}
+
+static node *
+sym_builtin_mod(node_list *params)
+{
+  node_list	*current;
+  int		init = 0;
+  int		result = 0;
+  int		num;
+
+  for (current = params; NULL != current; current = current->next)
+    {
+      if (current->elem->type != NUM && current->elem->type != NIL)
+	builtin_error("bad parameter for builtin modulo");
+      if (current->elem->type == NUM)
+	{
+	  if (init == 0)
+	    {
+	      init = 1;
+	      result = atoi(((node_num *) current->elem->elem)->val);
+	    }
+	  else
+	    {
+	      num = atoi(((node_num *) current->elem->elem)->val);
+	      if (num == 0)
+		builtin_error("modulo by 0");
+	      result /= num;
+	      init = 2;
+	    }
+	}
+      else
+	builtin_error("modulo by 0");
+    }
+  if (2 != init)
+    builtin_error("builtin modulo expects at least two parameters");
 
   return node_new_num(result);
 }
